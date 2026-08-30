@@ -188,7 +188,8 @@
 
 <script>
     const KOBO_URL = "https://ee.kobotoolbox.org/x/fzFDr1H6";
-    const NB_CHAMPS_A_CONSERVER = 7; // Nombre total d'éléments dans le QR code (role, nom, phone, commune, fkt, login, pcc)
+    const PREFIXE_ATTENDU = "RSU2026_vague_2";
+    const NB_CHAMPS_A_CONSERVER = 6; // Seulement role, nom, phone, commune, fkt, login
 
     // BASE DE DONNÉES DES RESPONSABLES (À personnaliser)
     const USERS = {
@@ -212,14 +213,13 @@
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get("status") === "submitted" && currentUser) {
             window.history.replaceState({}, document.title, window.location.pathname);
-            setTimeout(() => {
-                const repeter = confirm("✅ Fiche de présence enregistrée avec succès !\n\nVoulez-vous scanner la carte d'un autre participant ?");
-                if (repeter) {
-                    démarrerScanner();
-                } else {
-                    showMessage("Session de pointage terminée.", "info");
-                }
-            }, 300);
+            // Redirection directe sans compte à rebours
+            const repeter = confirm("✅ Fiche de présence enregistrée avec succès !\n\nVoulez-vous scanner la carte d'un autre participant ?");
+            if (repeter) {
+                démarrerScanner();
+            } else {
+                showMessage("Session de pointage terminée.", "info");
+            }
         }
     });
 
@@ -272,14 +272,24 @@
         let sepEffectif = qrText.includes(";") ? ";" : "|";
         let elements = qrText.split(sepEffectif);
 
+        // 1. Vérification du préfixe obligatoire
+        if (elements[0].trim() !== PREFIXE_ATTENDU) {
+            showMessage("QR code invalide, veuillez trouver le vrai QR code.", "error");
+            document.getElementById("scanButton").disabled = false;
+            return;
+        }
+
+        // 2. Suppression du préfixe "RSU2026_vague_2"
+        elements.shift();
+
         if (elements.length < NB_CHAMPS_A_CONSERVER) {
             showMessage("QR Code invalide : informations insuffisantes.", "error");
             document.getElementById("scanButton").disabled = false;
             return;
         }
 
-        // 1. Remplacer les espaces internes à l'intérieur de chaque champ par des tirets bas (_)
-        // 2. Joindre les éléments avec des ESPACES (" ") pour rendre la chaîne 100% compatible avec selected-at() dans Kobo
+        // 3. Nettoyage : remplacement des espaces internes par des tirets bas (_), 
+        // puis assemblage avec des espaces pour la compatibilité native Kobo (selected-at)
         const elementsPropres = elements.map(item => item.trim().replace(/\s+/g, "_"));
         const donneesPropres = elementsPropres.slice(0, NB_CHAMPS_A_CONSERVER).join(" ");
 
