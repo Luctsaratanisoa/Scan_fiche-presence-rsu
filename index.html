@@ -4,60 +4,178 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pointage RSU 2026</title>
+    
+    <!-- Bibliothèque de lecture QR Code -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    
     <style>
-        * { box-sizing: border-box; }
-        body { margin: 0; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f6f8; color: #222; }
-        .container { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 3px 15px rgba(0,0,0,0.12); }
-        h1 { text-align: center; font-size: 22px; margin-bottom: 20px; color: #1976d2; }
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; font-weight: bold; margin-bottom: 5px; }
-        .input-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
-        .action { display: flex; align-items: center; padding: 15px; margin: 10px 0; border: 2px solid #ddd; border-radius: 10px; cursor: pointer; }
-        .action input { margin-right: 12px; transform: scale(1.3); }
-        button { width: 100%; padding: 15px; margin-top: 15px; border: none; border-radius: 10px; background: #1976d2; color: white; font-size: 18px; font-weight: bold; cursor: pointer; }
-        button.logout { background: #d32f2f; margin-top: 10px; padding: 10px; font-size: 14px; }
-        #reader { width: 100%; margin-top: 20px; border-radius: 10px; overflow: hidden; }
-        #message { margin-top: 15px; padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; }
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.12);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #1976d2;
+        }
+
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #e3f0ff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .action {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .action input {
+            margin-right: 12px;
+            transform: scale(1.3);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #1976d2;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background: #aaa;
+        }
+
+        /* Style du bouton de déconnexion ❌ encadré */
+        button.logout {
+            background: #ffffff;
+            color: #d32f2f;
+            border: 2px solid #d32f2f;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 4px 10px;
+            margin: 0;
+            width: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        button.logout:hover {
+            background: #d32f2f;
+            color: #ffffff;
+        }
+
+        #reader {
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        #message, .message {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+
         .success { background: #dff5e3; color: #176b2c; }
         .error { background: #fde0e0; color: #9b1c1c; }
         .info { background: #e3f0ff; color: #145a9e; }
         .hidden { display: none; }
-        .user-header { display: flex; justify-content: space-between; align-items: center; background: #e3f0ff; padding: 10px 15px; border-radius: 8px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
 <div class="container">
 
+    <!-- ÉCRAN 1 : CONNEXION RESPONSABLE -->
     <div id="loginScreen">
         <h1>Connexion Responsable</h1>
         <div class="input-group">
-            <label>Identifiant / Login :</label>
+            <label for="username">Identifiant / Login :</label>
             <input type="text" id="username" placeholder="Entrez votre identifiant">
         </div>
         <div class="input-group">
-            <label>Mot de passe :</label>
+            <label for="password">Mot de passe :</label>
             <input type="password" id="password" placeholder="Entrez votre mot de passe">
         </div>
         <button id="loginBtn">SE CONNECTER</button>
         <div id="loginError" class="message error hidden"></div>
     </div>
 
+    <!-- ÉCRAN 2 : APPLICATION DE POINTAGE -->
     <div id="appScreen" class="hidden">
         <div class="user-header">
-            <span>👤 **<span id="displayUser"></span>**</span>
-            <button id="logoutBtn" class="logout">Déconnexion</button>
+            <span>👤 <strong><span id="displayUser"></span></strong></span>
+            <button id="logoutBtn" class="logout" title="Fermer la session / Déconnexion">❌</button>
         </div>
 
         <h1>Fiche de Présence RSU</h1>
 
-        <div style="font-weight:bold; margin-bottom:10px;">Type d'action :</div>
+        <div style="font-weight: bold; margin-bottom: 10px;">Type d'action :</div>
         <label class="action">
-            <input type="radio" name="action" value="IN" checked> Check-in (Entrée)
+            <input type="radio" name="action" value="IN" checked> Check-in (Entrée / Arrivée)
         </label>
         <label class="action">
-            <input type="radio" name="action" value="OUT"> Check-out (Sortie)
+            <input type="radio" name="action" value="OUT"> Check-out (Sortie / Départ)
         </label>
 
         <button id="scanButton">📷 SCANNER LE QR CODE</button>
@@ -70,7 +188,7 @@
 
 <script>
     const KOBO_URL = "https://ee.kobotoolbox.org/x/fzFDr1H6";
-    const NB_CHAMPS_A_CONSERVER = 6;
+    const NB_CHAMPS_A_CONSERVER = 7; // Nombre total d'éléments dans le QR code (role, nom, phone, commune, fkt, login, pcc)
 
     // BASE DE DONNÉES DES RESPONSABLES (À personnaliser)
     const USERS = {
@@ -82,7 +200,7 @@
     let currentUser = localStorage.getItem("resp_user") || null;
     let html5QrCode = null;
 
-    // Initialisation au chargement
+    // Initialisation au chargement de la page
     window.addEventListener("DOMContentLoaded", () => {
         if (currentUser) {
             showAppScreen();
@@ -90,19 +208,22 @@
             showLoginScreen();
         }
 
-        // Traitement du retour de soumission Kobo
+        // Traitement du retour après validation sur Kobo
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get("status") === "submitted" && currentUser) {
             window.history.replaceState({}, document.title, window.location.pathname);
             setTimeout(() => {
-                if (confirm("✅ Fiche enregistrée avec succès !\n\nVoulez-vous scanner un autre participant ?")) {
+                const repeter = confirm("✅ Fiche de présence enregistrée avec succès !\n\nVoulez-vous scanner la carte d'un autre participant ?");
+                if (repeter) {
                     démarrerScanner();
+                } else {
+                    showMessage("Session de pointage terminée.", "info");
                 }
             }, 300);
         }
     });
 
-    // Gestion Connexion / Déconnexion
+    // Authentification
     document.getElementById("loginBtn").addEventListener("click", () => {
         const u = document.getElementById("username").value.trim();
         const p = document.getElementById("password").value.trim();
@@ -119,6 +240,7 @@
         }
     });
 
+    // Déconnexion via l'icône ❌
     document.getElementById("logoutBtn").addEventListener("click", () => {
         localStorage.removeItem("resp_user");
         currentUser = null;
@@ -128,6 +250,8 @@
     function showLoginScreen() {
         document.getElementById("loginScreen").classList.remove("hidden");
         document.getElementById("appScreen").classList.add("hidden");
+        document.getElementById("username").value = "";
+        document.getElementById("password").value = "";
     }
 
     function showAppScreen() {
@@ -144,27 +268,32 @@
     }
 
     function traiterQRCode(qrText) {
-        let sepEffectif = qrText.includes("|") ? "|" : ";";
+        // Découpe selon le séparateur d'origine (; ou |)
+        let sepEffectif = qrText.includes(";") ? ";" : "|";
         let elements = qrText.split(sepEffectif);
 
         if (elements.length < NB_CHAMPS_A_CONSERVER) {
-            showMessage("QR Code invalide.", "error");
+            showMessage("QR Code invalide : informations insuffisantes.", "error");
             document.getElementById("scanButton").disabled = false;
             return;
         }
 
-        const donneesPropres = elements.slice(0, NB_CHAMPS_A_CONSERVER).join(sepEffectif);
+        // 1. Remplacer les espaces internes à l'intérieur de chaque champ par des tirets bas (_)
+        // 2. Joindre les éléments avec des ESPACES (" ") pour rendre la chaîne 100% compatible avec selected-at() dans Kobo
+        const elementsPropres = elements.map(item => item.trim().replace(/\s+/g, "_"));
+        const donneesPropres = elementsPropres.slice(0, NB_CHAMPS_A_CONSERVER).join(" ");
+
         const action = document.querySelector('input[name="action"]:checked').value;
         const urlRetourHTML = window.location.origin + window.location.pathname + "?status=submitted";
 
-        // Construction de l'URL avec les 3 paramètres injectés dans Kobo
+        // Injection des paramètres dans l'URL Enketo Kobo
         const targetUrl = new URL(KOBO_URL);
         targetUrl.searchParams.set("d[qr_code_raw]", donneesPropres);
         targetUrl.searchParams.set("d[action_type]", action);
-        targetUrl.searchParams.set("d[responsable_login]", currentUser); // Variable du responsable
+        targetUrl.searchParams.set("d[responsable_login]", currentUser);
         targetUrl.searchParams.set("returnUrl", urlRetourHTML);
 
-        showMessage("Redirection en cours...", "success");
+        showMessage("Redirection vers Kobo en cours...", "success");
         window.location.href = targetUrl.toString();
     }
 
@@ -172,9 +301,11 @@
         const reader = document.getElementById("reader");
         reader.classList.remove("hidden");
         document.getElementById("scanButton").disabled = true;
-        showMessage("Pointez vers le QR Code.", "info");
+
+        showMessage("Autorisez la caméra et présentez le QR Code.", "info");
 
         html5QrCode = new Html5Qrcode("reader");
+
         html5QrCode.start(
             { facingMode: "environment" },
             { fps: 10, qrbox: { width: 250, height: 250 } },
@@ -183,11 +314,14 @@
                     html5QrCode.clear();
                     html5QrCode = null;
                     traiterQRCode(decodedText);
+                }).catch(() => {
+                    traiterQRCode(decodedText);
                 });
             },
             () => {}
-        ).catch(() => {
-            showMessage("Erreur d'accès à la caméra.", "error");
+        ).catch((err) => {
+            console.error(err);
+            showMessage("Impossible d'accéder à la caméra.", "error");
             document.getElementById("scanButton").disabled = false;
         });
     }
