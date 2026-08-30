@@ -189,9 +189,9 @@
 <script>
     const KOBO_URL = "https://ee.kobotoolbox.org/x/fzFDr1H6";
     const PREFIXE_ATTENDU = "RSU2026_vague_2";
-    const NB_CHAMPS_A_CONSERVER = 6; // Seulement role, nom, phone, commune, fkt, login
+    const NB_CHAMPS_A_CONSERVER = 6; // Rôle, Nom, Tél, Commune, Fokontany, Login
 
-    // BASE DE DONNÉES DES RESPONSABLES (À personnaliser)
+    // BASE DE DONNÉES DES RESPONSABLES
     const USERS = {
         "admin01": "pass123",
         "resp_nord": "rsu2026",
@@ -213,13 +213,22 @@
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get("status") === "submitted" && currentUser) {
             window.history.replaceState({}, document.title, window.location.pathname);
-            // Redirection directe sans compte à rebours
-            const repeter = confirm("✅ Fiche de présence enregistrée avec succès !\n\nVoulez-vous scanner la carte d'un autre participant ?");
-            if (repeter) {
-                démarrerScanner();
-            } else {
-                showMessage("Session de pointage terminée.", "info");
-            }
+            
+            setTimeout(() => {
+                const continuer = confirm(
+                    "Fiche de présence enregistrée avec succès.\n\n" +
+                    "Voulez-vous scanner un autre QR Code ?\n\n" +
+                    "• OK = Oui (Lancer un nouveau scanner)\n" +
+                    "• Annuler = Non (Quitter)"
+                );
+
+                if (continuer) {
+                    démarrerScanner();
+                } else {
+                    showMessage("Session de pointage terminée.", "info");
+                    document.getElementById("scanButton").disabled = false;
+                }
+            }, 100);
         }
     });
 
@@ -268,18 +277,17 @@
     }
 
     function traiterQRCode(qrText) {
-        // Découpe selon le séparateur d'origine (; ou |)
         let sepEffectif = qrText.includes(";") ? ";" : "|";
         let elements = qrText.split(sepEffectif);
 
-        // 1. Vérification du préfixe obligatoire
+        // 1. Contrôle du préfixe obligatoire
         if (elements[0].trim() !== PREFIXE_ATTENDU) {
             showMessage("QR code invalide, veuillez trouver le vrai QR code.", "error");
             document.getElementById("scanButton").disabled = false;
             return;
         }
 
-        // 2. Suppression du préfixe "RSU2026_vague_2"
+        // 2. Retrait du préfixe
         elements.shift();
 
         if (elements.length < NB_CHAMPS_A_CONSERVER) {
@@ -288,15 +296,13 @@
             return;
         }
 
-        // 3. Nettoyage : remplacement des espaces internes par des tirets bas (_), 
-        // puis assemblage avec des espaces pour la compatibilité native Kobo (selected-at)
+        // 3. Remplacement des espaces internes par des _ puis assemblage par espaces
         const elementsPropres = elements.map(item => item.trim().replace(/\s+/g, "_"));
         const donneesPropres = elementsPropres.slice(0, NB_CHAMPS_A_CONSERVER).join(" ");
 
         const action = document.querySelector('input[name="action"]:checked').value;
         const urlRetourHTML = window.location.origin + window.location.pathname + "?status=submitted";
 
-        // Injection des paramètres dans l'URL Enketo Kobo
         const targetUrl = new URL(KOBO_URL);
         targetUrl.searchParams.set("d[qr_code_raw]", donneesPropres);
         targetUrl.searchParams.set("d[action_type]", action);
