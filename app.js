@@ -19,7 +19,7 @@
  */
 
 const KOBO_FORM_URL =
-    "https://ee.kobotoolbox.org/x/TON_FORM_ID";
+    "https://ee.kobotoolbox.org/single/BYiyz0ZJ";
 
 
 /*
@@ -55,7 +55,7 @@ const QR_FIELD =
  */
 
 const PASSWORD =
-    "123456";
+    "RSU_pass_1234";
 
 
 /*
