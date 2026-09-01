@@ -2,97 +2,46 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scanner QR Code - RSU</title>
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <style>
-        body { font-family: sans-serif; text-align: center; padding: 20px; background: #f4f6f8; margin: 0; }
-        .card { max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        #reader { width: 100%; margin-top: 15px; border-radius: 8px; overflow: hidden; }
-        .msg { padding: 12px; margin-top: 15px; border-radius: 8px; font-weight: bold; }
-        .info { background: #e3f0ff; color: #145a9e; }
-        .error { background: #fde0e0; color: #9b1c1c; }
-        .success { background: #dff5e3; color: #176b2c; }
-    </style>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Scanner participant</title>
+
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<div class="card">
-    <h2>Scanner QR Code</h2>
-    <div id="status" class="msg info">Initialisation de la caméra...</div>
+<div class="container">
+
+    <h1>📷 Scanner le participant</h1>
+
+    <p id="status">
+        Autorisez l'accès à la caméra.
+    </p>
+
     <div id="reader"></div>
+
+    <div id="result" class="result hidden">
+        <h2>QR code détecté</h2>
+
+        <div id="code"></div>
+
+        <button id="continueButton">
+            Continuer vers le formulaire
+        </button>
+
+        <button id="rescanButton">
+            Scanner à nouveau
+        </button>
+    </div>
+
 </div>
 
-<script>
-    // ⚠️ Remplacez ces deux URL par vos vrais liens Enketo Web
-    const KOBO_FORM_1_URL = "https://ee.kobotoolbox.org/BYiyz0ZJ";
-    const KOBO_FORM_2_URL = "https://ee.kobotoolbox.org/BYiyz0ZJ"; 
+<script src="https://unpkg.com/html5-qrcode"
+        type="text/javascript"></script>
 
-    const PREFIXE_ATTENDU = "RSU2026_vague_2";
-    const NB_CHAMPS = 6;
-
-    // Récupération des paramètres transmis depuis le Formulaire 1
-    const urlParams = new URLSearchParams(window.location.search);
-    const actionType = urlParams.get("action") || "IN";
-    const respLogin = urlParams.get("user") || "agent";
-
-    function traiterQRCode(qrText) {
-        let sep = qrText.includes(";") ? ";" : "|";
-        let elements = qrText.split(sep);
-
-        if (elements[0].trim() !== PREFIXE_ATTENDU) {
-            document.getElementById("status").className = "msg error";
-            document.getElementById("status").textContent = "QR Code invalide. Réessayez.";
-            setTimeout(demarrerScanner, 2000);
-            return;
-        }
-
-        elements.shift(); // Retrait du préfixe
-
-        if (elements.length < NB_CHAMPS) {
-            document.getElementById("status").className = "msg error";
-            document.getElementById("status").textContent = "Données QR incomplètes.";
-            setTimeout(demarrerScanner, 2000);
-            return;
-        }
-
-        const elementsPropres = elements.map(e => e.trim().replace(/\s+/g, "_"));
-        const donneesPropres = elementsPropres.slice(0, NB_CHAMPS).join(" ");
-
-        // Construction du lien vers le Formulaire 2 avec pré-remplissage + returnUrl
-        const targetUrl = new URL(KOBO_FORM_2_URL);
-        targetUrl.searchParams.append("d[qr_code_raw]", donneesPropres);
-        targetUrl.searchParams.append("d[action_type]", actionType);
-        targetUrl.searchParams.append("d[responsable_login]", respLogin);
-        
-        // returnUrl renvoie vers le Formulaire 1 après la soumission du Formulaire 2
-        targetUrl.searchParams.append("returnUrl", KOBO_FORM_1_URL);
-
-        document.getElementById("status").className = "msg success";
-        document.getElementById("status").textContent = "Lecture réussie. Redirection...";
-        window.location.href = targetUrl.toString();
-    }
-
-    function demarrerScanner() {
-        document.getElementById("status").className = "msg info";
-        document.getElementById("status").textContent = "Présentez le QR Code devant la caméra.";
-        
-        const html5QrCode = new Html5Qrcode("reader");
-        html5QrCode.start(
-            { facingMode: "environment" },
-            { fps: 10, qrbox: { width: 250, height: 250 } },
-            (decodedText) => {
-                html5QrCode.stop().then(() => traiterQRCode(decodedText));
-            },
-            () => {}
-        ).catch(err => {
-            document.getElementById("status").className = "msg error";
-            document.getElementById("status").textContent = "Erreur d'accès à l'appareil photo.";
-        });
-    }
-
-    window.addEventListener("DOMContentLoaded", demarrerScanner);
-</script>
+<script src="app.js"></script>
 
 </body>
 </html>
