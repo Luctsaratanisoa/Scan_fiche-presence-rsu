@@ -1,9 +1,14 @@
+```html
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
+
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#ffffff">
 
     <title>Scanner participant</title>
 
@@ -12,35 +17,108 @@
 
 <body>
 
-<div class="container">
+<!-- ================================================= -->
+<!-- ÉCRAN DE CONNEXION                                -->
+<!-- ================================================= -->
 
-    <h1>📷 Scanner le participant</h1>
+<div id="loginScreen" class="login-container">
 
-    <p id="status">
-        Autorisez l'accès à la caméra.
-    </p>
+    <div class="login-box">
 
-    <div id="reader"></div>
+        <div class="lock-icon">🔐</div>
 
-    <div id="result" class="result hidden">
-        <h2>QR code détecté</h2>
+        <h1>Accès sécurisé</h1>
 
-        <div id="code"></div>
-            <button id="continueButton">
-            Enregistrer
-            </button>
+        <p>
+            Entrez le mot de passe pour accéder
+            au scanner.
+        </p>
 
-            <button id="rescanButton">
-            Scanner à nouveau
-            </button>
+        <input
+            type="password"
+            id="passwordInput"
+            placeholder="Mot de passe"
+            autocomplete="current-password"
+        >
+
+        <button id="loginButton">
+            Accéder au scanner
+        </button>
+
+        <p id="loginError" class="error"></p>
+
     </div>
 
 </div>
 
+
+<!-- ================================================= -->
+<!-- ÉCRAN SCANNER                                     -->
+<!-- ================================================= -->
+
+<div id="scannerScreen"
+     class="container"
+     style="display: none;">
+
+    <h1>📷 Scanner le participant</h1>
+
+    <p id="status">
+        Préparation de la caméra...
+    </p>
+
+    <div id="reader"></div>
+
+
+    <!-- ============================================= -->
+    <!-- RÉSULTAT DU SCAN                              -->
+    <!-- ============================================= -->
+
+    <div id="result" class="result hidden">
+
+        <h2>✅ QR code détecté</h2>
+
+        <div id="code"></div>
+
+        <button id="continueButton"
+                class="primary-button">
+            Enregistrer
+        </button>
+
+        <button id="rescanButton"
+                class="secondary-button">
+            Scanner à nouveau
+        </button>
+
+    </div>
+
+
+    <!-- ============================================= -->
+    <!-- BOUTON VERROUILLAGE                           -->
+    <!-- ============================================= -->
+
+    <button id="logoutButton"
+            class="logout-button">
+        🔒 Verrouiller
+    </button>
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- BIBLIOTHÈQUE DE SCAN QR                           -->
+<!-- ================================================= -->
+
 <script src="https://unpkg.com/html5-qrcode"
-        type="text/javascript"></script>
+        type="text/javascript">
+</script>
+
+
+<!-- ================================================= -->
+<!-- PROGRAMME PRINCIPAL                               -->
+<!-- ================================================= -->
 
 <script src="app.js"></script>
 
 </body>
 </html>
+
