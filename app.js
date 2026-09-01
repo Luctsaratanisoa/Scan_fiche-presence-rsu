@@ -4,36 +4,17 @@
 
 
 /*
- * =========================================================
- * 1. LIEN DE TON FORMULAIRE KOBO
- * =========================================================
+ * LIEN WEB DE TON FORMULAIRE KOBO
  *
- * REMPLACE cette adresse par le vrai lien Web de ton
- * formulaire KoboToolbox.
- *
- * Exemple :
- *
- * https://ee.kobotoolbox.org/x/AbCdEf123
- *
+ * ⚠️ REMPLACE CETTE URL
  */
 
 const KOBO_FORM_URL =
-    "https://ee.kobotoolbox.org/single/BYiyz0ZJ";
+    "https://ee.kobotoolbox.org/x/TON_FORM_ID";
 
 
 /*
- * =========================================================
- * 2. CHAMP QR DANS KOBO
- * =========================================================
- *
- * Dans ton formulaire, qr_code_raw se trouve dans :
- *
- * membres_group
- *
- * Donc nous utilisons :
- *
- * membres_group/qr_code_raw
- *
+ * CHAMP QR DANS KOBO
  */
 
 const QR_FIELD =
@@ -41,37 +22,26 @@ const QR_FIELD =
 
 
 /*
- * =========================================================
- * 3. MOT DE PASSE
- * =========================================================
+ * MOT DE PASSE
  *
- * CHANGE cette valeur.
- *
- * Exemple :
- *
- * const PASSWORD = "MonMotDePasse2026";
- *
+ * ⚠️ CHANGE LE MOT DE PASSE
  */
 
 const PASSWORD =
-    "RSU_pass_1234";
+    "123456";
 
 
 /*
- * =========================================================
- * 4. NOM DE LA SESSION
- * =========================================================
+ * NOM DE LA SESSION
  */
 
 const AUTH_KEY =
     "scannerAuthenticated";
 
 
-/*
- * =========================================================
- * VARIABLES
- * =========================================================
- */
+/* =========================================================
+   VARIABLES
+   ========================================================= */
 
 let scanner = null;
 
@@ -80,72 +50,58 @@ let scannedCode = null;
 let scanning = false;
 
 
-/*
- * =========================================================
- * ÉLÉMENTS HTML
- * =========================================================
- */
-
-const loginScreen =
-    document.getElementById("loginScreen");
-
-const scannerScreen =
-    document.getElementById("scannerScreen");
-
-const passwordInput =
-    document.getElementById("passwordInput");
-
-const loginButton =
-    document.getElementById("loginButton");
-
-const loginError =
-    document.getElementById("loginError");
-
-const logoutButton =
-    document.getElementById("logoutButton");
-
-const continueButton =
-    document.getElementById("continueButton");
-
-const rescanButton =
-    document.getElementById("rescanButton");
-
-const result =
-    document.getElementById("result");
-
-const code =
-    document.getElementById("code");
-
-const status =
-    document.getElementById("status");
-
-
-/*
- * =========================================================
- * DÉMARRAGE DE L'APPLICATION
- * =========================================================
- */
+/* =========================================================
+   INITIALISATION
+   ========================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
     function () {
 
+        console.log("Application chargée");
+
+
         /*
-         * Vérifier si l'utilisateur est déjà
-         * authentifié.
+         * Récupérer les éléments HTML
          */
 
-        if (
-            sessionStorage.getItem(AUTH_KEY)
-            === "true"
-        ) {
+        const loginButton =
+            document.getElementById(
+                "loginButton"
+            );
 
-            showScanner();
+        const passwordInput =
+            document.getElementById(
+                "passwordInput"
+            );
 
-        } else {
+        const continueButton =
+            document.getElementById(
+                "continueButton"
+            );
 
-            showLogin();
+        const rescanButton =
+            document.getElementById(
+                "rescanButton"
+            );
 
+        const logoutButton =
+            document.getElementById(
+                "logoutButton"
+            );
+
+
+        /*
+         * Vérifier les éléments
+         */
+
+        if (!loginButton) {
+
+            console.error(
+                "ERREUR : loginButton introuvable"
+            );
+
+            return;
         }
 
 
@@ -160,7 +116,7 @@ document.addEventListener(
 
 
         /*
-         * Touche Entrée dans le mot de passe
+         * Touche Entrée
          */
 
         passwordInput.addEventListener(
@@ -178,7 +134,7 @@ document.addEventListener(
 
 
         /*
-         * Enregistrer
+         * Bouton Enregistrer
          */
 
         continueButton.addEventListener(
@@ -206,33 +162,71 @@ document.addEventListener(
             logout
         );
 
+
+        /*
+         * Vérifier si déjà connecté
+         */
+
+        if (
+            sessionStorage.getItem(
+                AUTH_KEY
+            ) === "true"
+        ) {
+
+            showScanner();
+
+        } else {
+
+            showLogin();
+
+        }
+
     }
 );
 
 
-/*
- * =========================================================
- * CONNEXION
- * =========================================================
- */
+/* =========================================================
+   CONNEXION
+   ========================================================= */
 
 function login() {
+
+    console.log(
+        "Tentative de connexion"
+    );
+
+
+    const passwordInput =
+        document.getElementById(
+            "passwordInput"
+        );
+
+    const loginError =
+        document.getElementById(
+            "loginError"
+        );
+
 
     const enteredPassword =
         passwordInput.value;
 
 
     /*
-     * Vérification du mot de passe
+     * Vérification
      */
 
     if (
         enteredPassword === PASSWORD
     ) {
 
+        console.log(
+            "Mot de passe correct"
+        );
+
+
         /*
-         * Mémoriser l'authentification
-         * uniquement pendant la session.
+         * Mémoriser la connexion
+         * pendant la session Safari.
          */
 
         sessionStorage.setItem(
@@ -242,7 +236,7 @@ function login() {
 
 
         /*
-         * Effacer le mot de passe
+         * Nettoyer
          */
 
         passwordInput.value = "";
@@ -251,16 +245,17 @@ function login() {
 
 
         /*
-         * Afficher le scanner
+         * Afficher scanner
          */
 
         showScanner();
 
     } else {
 
-        /*
-         * Mauvais mot de passe
-         */
+        console.log(
+            "Mot de passe incorrect"
+        );
+
 
         loginError.textContent =
             "❌ Mot de passe incorrect.";
@@ -273,13 +268,22 @@ function login() {
 }
 
 
-/*
- * =========================================================
- * AFFICHER L'ÉCRAN DE CONNEXION
- * =========================================================
- */
+/* =========================================================
+   AFFICHER LOGIN
+   ========================================================= */
 
 function showLogin() {
+
+    const loginScreen =
+        document.getElementById(
+            "loginScreen"
+        );
+
+    const scannerScreen =
+        document.getElementById(
+            "scannerScreen"
+        );
+
 
     loginScreen.style.display =
         "flex";
@@ -290,13 +294,22 @@ function showLogin() {
 }
 
 
-/*
- * =========================================================
- * AFFICHER LE SCANNER
- * =========================================================
- */
+/* =========================================================
+   AFFICHER SCANNER
+   ========================================================= */
 
 function showScanner() {
+
+    const loginScreen =
+        document.getElementById(
+            "loginScreen"
+        );
+
+    const scannerScreen =
+        document.getElementById(
+            "scannerScreen"
+        );
+
 
     loginScreen.style.display =
         "none";
@@ -306,7 +319,7 @@ function showScanner() {
 
 
     /*
-     * Démarrer la caméra.
+     * Démarrer la caméra
      */
 
     startScanner();
@@ -314,63 +327,131 @@ function showScanner() {
 }
 
 
-/*
- * =========================================================
- * DÉMARRER LE SCANNER
- * =========================================================
- */
+/* =========================================================
+   DÉMARRER LE SCANNER
+   ========================================================= */
 
 function startScanner() {
 
+    console.log(
+        "Démarrage caméra"
+    );
+
+
+    const reader =
+        document.getElementById(
+            "reader"
+        );
+
+
+    const status =
+        document.getElementById(
+            "status"
+        );
+
+
+    const result =
+        document.getElementById(
+            "result"
+        );
+
+
     /*
-     * Nettoyer l'ancien scanner.
+     * Nettoyer
      */
 
-    document
-        .getElementById("reader")
-        .innerHTML = "";
+    reader.innerHTML = "";
 
-
-    result.classList.add("hidden");
-
-
-    status.textContent =
-        "Autorisez l'accès à la caméra.";
+    result.classList.add(
+        "hidden"
+    );
 
 
     scannedCode = null;
 
 
+    status.textContent =
+        "Demande d'accès à la caméra...";
+
+
     /*
-     * Créer le scanner.
+     * Vérifier HTTPS
+     */
+
+    if (
+        !window.isSecureContext
+    ) {
+
+        status.textContent =
+            "🔒 Cette page doit être ouverte en HTTPS.";
+
+        return;
+    }
+
+
+    /*
+     * Vérifier la bibliothèque
+     */
+
+    if (
+        typeof Html5Qrcode ===
+        "undefined"
+    ) {
+
+        status.textContent =
+            "❌ Le scanner QR n'a pas pu être chargé.";
+
+        console.error(
+            "Html5Qrcode n'est pas disponible"
+        );
+
+        return;
+    }
+
+
+    /*
+     * Créer scanner
      */
 
     scanner =
-        new Html5Qrcode("reader");
+        new Html5Qrcode(
+            "reader"
+        );
 
 
     /*
-     * Configuration caméra.
+     * Configuration
+     */
+
+    const config = {
+
+        fps: 10,
+
+        qrbox: {
+            width: 250,
+            height: 250
+        },
+
+        aspectRatio: 1.0
+
+    };
+
+
+    /*
+     * Démarrer caméra arrière.
+     *
+     * On utilise "environment"
+     * sans "exact", car Safari peut
+     * refuser exact:environment.
      */
 
     scanner.start(
 
         {
-            facingMode: {
-                exact: "environment"
-            }
+            facingMode: "environment"
         },
 
-        {
-            fps: 10,
-
-            qrbox: {
-                width: 250,
-                height: 250
-            },
-
-            aspectRatio: 1.0
-        },
+        config,
 
         onScanSuccess,
 
@@ -383,7 +464,11 @@ function startScanner() {
             scanning = true;
 
             status.textContent =
-                "Placez le QR code devant la caméra.";
+                "📷 Placez le QR code devant la caméra.";
+
+            console.log(
+                "Caméra démarrée"
+            );
 
         }
     )
@@ -392,24 +477,23 @@ function startScanner() {
 
             scanning = false;
 
-            handleCameraError(error);
+            handleCameraError(
+                error
+            );
 
         }
     );
+
 }
 
 
-/*
- * =========================================================
- * QR CODE DÉTECTÉ
- * =========================================================
- */
+/* =========================================================
+   QR DÉTECTÉ
+   ========================================================= */
 
-function onScanSuccess(decodedText) {
-
-    /*
-     * Éviter plusieurs détections.
-     */
+function onScanSuccess(
+    decodedText
+) {
 
     if (
         !decodedText ||
@@ -417,72 +501,84 @@ function onScanSuccess(decodedText) {
     ) {
 
         return;
-
     }
 
 
-    /*
-     * Mémoriser le code.
-     */
+    console.log(
+        "QR détecté :",
+        decodedText
+    );
+
 
     scannedCode =
         decodedText;
 
 
     /*
-     * Arrêter la caméra.
+     * Arrêter caméra
      */
 
     stopScanner();
 
 
     /*
-     * Afficher le code.
+     * Afficher résultat
      */
+
+    const code =
+        document.getElementById(
+            "code"
+        );
+
+    const status =
+        document.getElementById(
+            "status"
+        );
+
+    const result =
+        document.getElementById(
+            "result"
+        );
+
 
     code.textContent =
         decodedText;
 
 
     status.textContent =
-        "QR code détecté.";
+        "✅ QR code détecté.";
 
-
-    /*
-     * Afficher le résultat.
-     */
 
     result.classList.remove(
         "hidden"
     );
+
 }
 
 
-/*
- * =========================================================
- * ERREUR DE SCAN
- * =========================================================
- */
+/* =========================================================
+   ERREUR DE LECTURE QR
+   ========================================================= */
 
 function onScanFailure(error) {
 
     /*
-     * Ne rien afficher ici.
+     * Ne rien afficher.
      *
-     * Cette fonction est appelée très souvent
-     * pendant que le scanner cherche un QR code.
+     * Cette fonction est appelée
+     * en permanence pendant le scan.
      */
 
 }
 
 
-/*
- * =========================================================
- * ERREUR CAMÉRA
- * =========================================================
- */
+/* =========================================================
+   ERREUR CAMÉRA
+   ========================================================= */
 
-function handleCameraError(error) {
+function handleCameraError(
+    error
+) {
 
     console.error(
         "Erreur caméra :",
@@ -490,13 +586,15 @@ function handleCameraError(error) {
     );
 
 
+    const status =
+        document.getElementById(
+            "status"
+        );
+
+
     let message =
-        "Impossible d'accéder à la caméra.";
+        "❌ Impossible d'accéder à la caméra.";
 
-
-    /*
-     * Permission refusée.
-     */
 
     if (
         error &&
@@ -513,29 +611,19 @@ function handleCameraError(error) {
         message =
             "📷 Accès à la caméra refusé. " +
             "Autorisez la caméra pour ce site " +
-            "dans les réglages de Safari.";
+            "dans les réglages de Safari, " +
+            "puis rechargez la page.";
 
     }
-
-
-    /*
-     * Page non sécurisée.
-     */
 
     else if (
         !window.isSecureContext
     ) {
 
         message =
-            "🔒 La caméra nécessite une connexion HTTPS. " +
-            "Vérifiez que votre page GitHub utilise https://.";
+            "🔒 La caméra nécessite HTTPS.";
 
     }
-
-
-    /*
-     * Caméra déjà utilisée.
-     */
 
     else if (
         error &&
@@ -558,14 +646,13 @@ function handleCameraError(error) {
 
     status.textContent =
         message;
+
 }
 
 
-/*
- * =========================================================
- * ARRÊTER LE SCANNER
- * =========================================================
- */
+/* =========================================================
+   ARRÊTER CAMÉRA
+   ========================================================= */
 
 function stopScanner() {
 
@@ -587,7 +674,7 @@ function stopScanner() {
                 function (error) {
 
                     console.error(
-                        "Erreur arrêt caméra :",
+                        "Erreur arrêt scanner :",
                         error
                     );
 
@@ -597,20 +684,15 @@ function stopScanner() {
             );
 
     }
+
 }
 
 
-/*
- * =========================================================
- * OUVRIR LE FORMULAIRE KOBO
- * =========================================================
- */
+/* =========================================================
+   OUVRIR KOBO
+   ========================================================= */
 
 function openKoboForm() {
-
-    /*
-     * Vérifier qu'un QR a été scanné.
-     */
 
     if (!scannedCode) {
 
@@ -623,7 +705,7 @@ function openKoboForm() {
 
 
     /*
-     * Vérifier que l'URL Kobo est configurée.
+     * Vérifier configuration Kobo
      */
 
     if (
@@ -633,8 +715,8 @@ function openKoboForm() {
     ) {
 
         alert(
-            "Vous devez d'abord configurer " +
-            "KOBO_FORM_URL dans app.js."
+            "⚠️ Configurez KOBO_FORM_URL " +
+            "dans app.js."
         );
 
         return;
@@ -642,7 +724,7 @@ function openKoboForm() {
 
 
     /*
-     * Créer les paramètres URL.
+     * Paramètres URL
      */
 
     const params =
@@ -650,11 +732,7 @@ function openKoboForm() {
 
 
     /*
-     * Préremplir le champ QR.
-     *
-     * Kobo :
-     *
-     * d[membres_group/qr_code_raw]
+     * Préremplir le QR
      */
 
     params.append(
@@ -664,13 +742,7 @@ function openKoboForm() {
 
 
     /*
-     * =====================================================
-     * LIEN DE RETOUR
-     * =====================================================
-     *
-     * On récupère automatiquement l'adresse
-     * de la page GitHub actuelle.
-     *
+     * Adresse de retour
      */
 
     const returnUrl =
@@ -685,7 +757,7 @@ function openKoboForm() {
 
 
     /*
-     * Construire l'URL finale.
+     * Construire URL Kobo
      */
 
     const koboUrl =
@@ -695,65 +767,57 @@ function openKoboForm() {
 
 
     console.log(
-        "Ouverture Kobo :",
+        "URL Kobo :",
         koboUrl
     );
 
 
     /*
-     * Ouvrir Kobo.
+     * Aller vers Kobo
      */
 
     window.location.href =
         koboUrl;
+
 }
 
 
-/*
- * =========================================================
- * NOUVEAU SCAN
- * =========================================================
- */
+/* =========================================================
+   SCANNER À NOUVEAU
+   ========================================================= */
 
 function restartScanner() {
-
-    /*
-     * Arrêter l'ancien scanner.
-     */
 
     stopScanner();
 
 
-    /*
-     * Effacer le code précédent.
-     */
-
     scannedCode = null;
 
+
+    const code =
+        document.getElementById(
+            "code"
+        );
+
+    const result =
+        document.getElementById(
+            "result"
+        );
+
+    const reader =
+        document.getElementById(
+            "reader"
+        );
+
+
     code.textContent = "";
-
-
-    /*
-     * Cacher le résultat.
-     */
 
     result.classList.add(
         "hidden"
     );
 
+    reader.innerHTML = "";
 
-    /*
-     * Vider le lecteur.
-     */
-
-    document
-        .getElementById("reader")
-        .innerHTML = "";
-
-
-    /*
-     * Redémarrer.
-     */
 
     setTimeout(
         function () {
@@ -763,19 +827,23 @@ function restartScanner() {
         },
         300
     );
+
 }
 
 
-/*
- * =========================================================
- * VERROUILLER
- * =========================================================
- */
+/* =========================================================
+   VERROUILLER
+   ========================================================= */
 
 function logout() {
 
+    console.log(
+        "Verrouillage"
+    );
+
+
     /*
-     * Supprimer l'authentification.
+     * Supprimer la session
      */
 
     sessionStorage.removeItem(
@@ -784,23 +852,27 @@ function logout() {
 
 
     /*
-     * Arrêter la caméra.
+     * Arrêter caméra
      */
 
     stopScanner();
 
 
     /*
-     * Retour à l'écran de connexion.
+     * Afficher login
      */
 
     showLogin();
 
 
     /*
-     * Mettre le curseur dans le champ.
+     * Donner le focus
      */
 
-    passwordInput.focus();
+    document
+        .getElementById(
+            "passwordInput"
+        )
+        .focus();
 
 }
