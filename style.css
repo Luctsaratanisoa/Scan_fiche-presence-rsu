@@ -36,38 +36,17 @@ h1 {
     word-break: break-word;
 }
 
-#continueButton,
-#rescanButton {
-  background-color: #10B981; /* Vert émeraude */
-  color: #FFFFFF;            /* Texte blanc */
-  font-family: system-ui, -apple-system, sans-serif;
-  font-weight: 700;          /* Texte en gras */
-  font-size: 16px;
-  
-  padding: 12px 24px;        /* Espacement interne */
-  border-radius: 10px;       /* Coins arrondis */
-  border: none;              /* Supprime la bordure par défaut */
-  
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;                  /* Espace si vous ajoutez une icône */
-  
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
+
+button {
+    width: 100%;
+    padding: 16px;
+    margin-top: 10px;
+    border: 0;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
 }
 
-/* Effet au survol (souris) */
-#continueButton:hover,
-#rescanButton:hover {
-  background-color: #059669; /* Vert légèrement plus foncé */
-}
-
-/* Effet au clic */
-#continueButton:active,
-#rescanButton:active {
-  transform: scale(0.98);    /* Lèger enfoncement */
-}
 
 .hidden {
     display: none;
