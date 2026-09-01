@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -16,107 +17,114 @@
 
 <body>
 
-<!-- ================================================= -->
-<!-- ÉCRAN DE CONNEXION                                -->
-<!-- ================================================= -->
+    <!-- ========================================= -->
+    <!-- ÉCRAN MOT DE PASSE                        -->
+    <!-- ========================================= -->
 
-<div id="loginScreen" class="login-container">
+    <div id="loginScreen" class="login-container">
 
-    <div class="login-box">
+        <div class="login-box">
 
-        <div class="lock-icon">🔐</div>
+            <div class="lock-icon">🔐</div>
 
-        <h1>Accès sécurisé</h1>
+            <h1>Accès sécurisé</h1>
 
-        <p>
-            Entrez le mot de passe pour accéder
-            au scanner.
+            <p>
+                Entrez le mot de passe pour accéder
+                au scanner.
+            </p>
+
+            <input
+                type="password"
+                id="passwordInput"
+                placeholder="Mot de passe"
+                autocomplete="off"
+            >
+
+            <button
+                type="button"
+                id="loginButton">
+                Accéder au scanner
+            </button>
+
+            <p id="loginError" class="error"></p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- ÉCRAN SCANNER                             -->
+    <!-- ========================================= -->
+
+    <div id="scannerScreen"
+         class="container"
+         style="display: none;">
+
+        <h1>📷 Scanner le participant</h1>
+
+        <p id="status">
+            Préparation...
         </p>
 
-        <input
-            type="password"
-            id="passwordInput"
-            placeholder="Mot de passe"
-            autocomplete="current-password"
-        >
-
-        <button id="loginButton">
-            Accéder au scanner
-        </button>
-
-        <p id="loginError" class="error"></p>
-
-    </div>
-
-</div>
+        <div id="reader"></div>
 
 
-<!-- ================================================= -->
-<!-- ÉCRAN SCANNER                                     -->
-<!-- ================================================= -->
+        <!-- RÉSULTAT DU QR -->
 
-<div id="scannerScreen"
-     class="container"
-     style="display: none;">
+        <div id="result"
+             class="result hidden">
 
-    <h1>📷 Scanner le participant</h1>
+            <h2>✅ QR code détecté</h2>
 
-    <p id="status">
-        Préparation de la caméra...
-    </p>
+            <div id="code"></div>
 
-    <div id="reader"></div>
-
-
-    <!-- ============================================= -->
-    <!-- RÉSULTAT DU SCAN                              -->
-    <!-- ============================================= -->
-
-    <div id="result" class="result hidden">
-
-        <h2>✅ QR code détecté</h2>
-
-        <div id="code"></div>
-
-        <button id="continueButton"
+            <button
+                type="button"
+                id="continueButton"
                 class="primary-button">
-            Enregistrer
-        </button>
+                Enregistrer
+            </button>
 
-        <button id="rescanButton"
+            <button
+                type="button"
+                id="rescanButton"
                 class="secondary-button">
-            Scanner à nouveau
+                Scanner à nouveau
+            </button>
+
+        </div>
+
+
+        <!-- VERROUILLAGE -->
+
+        <button
+            type="button"
+            id="logoutButton"
+            class="logout-button">
+            🔒 Verrouiller
         </button>
 
     </div>
 
 
-    <!-- ============================================= -->
-    <!-- BOUTON VERROUILLAGE                           -->
-    <!-- ============================================= -->
+    <!-- ========================================= -->
+    <!-- BIBLIOTHÈQUE QR                          -->
+    <!-- ========================================= -->
 
-    <button id="logoutButton"
-            class="logout-button">
-        🔒 Verrouiller
-    </button>
-
-</div>
-
-
-<!-- ================================================= -->
-<!-- BIBLIOTHÈQUE DE SCAN QR                           -->
-<!-- ================================================= -->
-
-<script src="https://unpkg.com/html5-qrcode"
+    <script
+        src="https://unpkg.com/html5-qrcode"
         type="text/javascript">
-</script>
+    </script>
 
 
-<!-- ================================================= -->
-<!-- PROGRAMME PRINCIPAL                               -->
-<!-- ================================================= -->
+    <!-- ========================================= -->
+    <!-- NOTRE PROGRAMME                          -->
+    <!-- ========================================= -->
 
-<script src="app.js"></script>
+    <script src="app.js"></script>
 
 </body>
 </html>
+```
