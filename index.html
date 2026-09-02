@@ -2,127 +2,324 @@
 <html lang="fr">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color"
+          content="#ffffff">
 
-    <title>Scanner participant</title>
+    <title>Scanner des agents</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet"
+          href="style.css">
+
 </head>
+
 
 <body>
 
-    <!-- ========================================= -->
-    <!-- ÉCRAN MOT DE PASSE                        -->
-    <!-- ========================================= -->
 
-    <div id="loginScreen" class="login-container">
+<!-- ===================================================== -->
+<!-- ÉCRAN DE CONNEXION                                    -->
+<!-- ===================================================== -->
 
-        <div class="login-box">
+<div id="loginScreen"
+     class="screen">
 
-            <div class="lock-icon">🔐</div>
+    <div class="login-box">
 
-            <h1>Accès sécurisé</h1>
+        <div class="lock-icon">
+            🔐
+        </div>
 
-            <p>
-                Entrez le mot de passe pour accéder
-                au scanner.
-            </p>
+        <h1>
+            Accès sécurisé
+        </h1>
 
-            <input
-                type="password"
-                id="passwordInput"
-                placeholder="Mot de passe"
-                autocomplete="off"
-            >
+        <p>
+            Entrez le mot de passe pour commencer.
+        </p>
 
-            <button
-                type="button"
-                id="loginButton">
-                Accéder au scanner
-            </button>
+        <input
+            type="password"
+            id="passwordInput"
+            placeholder="Mot de passe"
+            autocomplete="off"
+        >
 
-            <p id="loginError" class="error"></p>
+        <button
+            type="button"
+            id="loginButton"
+            class="primary-button">
 
+            Accéder
+
+        </button>
+
+        <p id="loginError"
+           class="error">
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- ===================================================== -->
+<!-- ÉCRAN DE CONFIGURATION                                -->
+<!-- ===================================================== -->
+
+<div id="settingsScreen"
+     class="screen"
+     style="display:none;">
+
+    <div class="settings-box">
+
+        <h1>
+            ⚙️ Paramètres de la session
+        </h1>
+
+        <p class="subtitle">
+            Ces informations seront conservées
+            pendant toute la session.
+        </p>
+
+
+        <!-- DISTRICT -->
+
+        <label for="districtSelect">
+            District
+        </label>
+
+        <select id="districtSelect">
+
+            <option value="">
+                -- Sélectionner le District --
+            </option>
+
+            <option value="ambohidratrimo">
+                Ambohidratrimo
+            </option>
+
+            <option value="antananarivo_atsimondrano">
+                Antananarivo Atsimondrano
+            </option>
+
+            <option value="antananarivo_avaradrano">
+                Antananarivo Avaradrano
+            </option>
+
+        </select>
+
+
+        <!-- COMMUNE -->
+
+        <label for="communeSelect">
+            Commune
+        </label>
+
+        <select id="communeSelect"
+                disabled>
+
+            <option value="">
+                -- Sélectionner d'abord le District --
+            </option>
+
+        </select>
+
+
+        <!-- ACTION -->
+
+        <label for="actionSelect">
+            Action
+        </label>
+
+        <select id="actionSelect">
+
+            <option value="">
+                -- Sélectionner l'Action --
+            </option>
+
+            <option value="check_in">
+                Check in
+            </option>
+
+            <option value="check_out">
+                Check out
+            </option>
+
+        </select>
+
+
+        <!-- SALLE -->
+
+        <label for="salleSelect">
+            Salle
+        </label>
+
+        <select id="salleSelect">
+
+            <option value="">
+                -- Sélectionner la Salle --
+            </option>
+
+            <option value="salle_1">
+                Salle 1
+            </option>
+
+            <option value="salle_2">
+                Salle 2
+            </option>
+
+            <option value="salle_3">
+                Salle 3
+            </option>
+
+        </select>
+
+
+        <p id="settingsError"
+           class="error">
+        </p>
+
+
+        <button
+            type="button"
+            id="startButton"
+            class="primary-button">
+
+            📷 Commencer les scans
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ===================================================== -->
+<!-- ÉCRAN SCANNER                                         -->
+<!-- ===================================================== -->
+
+<div id="scannerScreen"
+     class="container"
+     style="display:none;">
+
+
+    <h1>
+        📷 Scanner l'agent
+    </h1>
+
+
+    <!-- RÉSUMÉ SESSION -->
+
+    <div class="session-info">
+
+        <div>
+            <strong>District :</strong>
+            <span id="currentDistrict"></span>
+        </div>
+
+        <div>
+            <strong>Commune :</strong>
+            <span id="currentCommune"></span>
+        </div>
+
+        <div>
+            <strong>Action :</strong>
+            <span id="currentAction"></span>
+        </div>
+
+        <div>
+            <strong>Salle :</strong>
+            <span id="currentSalle"></span>
         </div>
 
     </div>
 
 
-    <!-- ========================================= -->
-    <!-- ÉCRAN SCANNER                             -->
-    <!-- ========================================= -->
-
-    <div id="scannerScreen"
-         class="container"
-         style="display: none;">
-
-        <h1>📷 Scanner le participant</h1>
-
-        <p id="status">
-            Préparation...
-        </p>
-
-        <div id="reader"></div>
+    <p id="status">
+        Préparation de la caméra...
+    </p>
 
 
-        <!-- RÉSULTAT DU QR -->
+    <!-- LECTEUR QR -->
 
-        <div id="result"
-             class="result hidden">
-
-            <h2>✅ QR code détecté</h2>
-
-            <div id="code"></div>
-
-            <button
-                type="button"
-                id="continueButton"
-                class="primary-button">
-                Enregistrer
-            </button>
-
-            <button
-                type="button"
-                id="rescanButton"
-                class="secondary-button">
-                Scanner à nouveau
-            </button>
-
-        </div>
+    <div id="reader"></div>
 
 
-        <!-- VERROUILLAGE -->
+    <!-- ================================================= -->
+    <!-- QR DÉTECTÉ                                        -->
+    <!-- ================================================= -->
+
+    <div id="result"
+         class="result hidden">
+
+        <h2>
+            ✅ QR code détecté
+        </h2>
+
+        <div id="code"></div>
+
 
         <button
             type="button"
-            id="logoutButton"
-            class="logout-button">
-            🔒 Verrouiller
+            id="continueButton"
+            class="primary-button">
+
+            Enregistrer dans Kobo
+
+        </button>
+
+
+        <button
+            type="button"
+            id="rescanButton"
+            class="secondary-button">
+
+            Scanner à nouveau
+
         </button>
 
     </div>
 
 
-    <!-- ========================================= -->
-    <!-- BIBLIOTHÈQUE QR                          -->
-    <!-- ========================================= -->
+    <!-- ================================================= -->
+    <!-- VERROUILLAGE                                      -->
+    <!-- ================================================= -->
 
-    <script
-        src="https://unpkg.com/html5-qrcode"
-        type="text/javascript">
-    </script>
+    <button
+        type="button"
+        id="logoutButton"
+        class="logout-button">
+
+        🔒 Verrouiller
+
+    </button>
+
+</div>
 
 
-    <!-- ========================================= -->
-    <!-- NOTRE PROGRAMME                          -->
-    <!-- ========================================= -->
+<!-- ===================================================== -->
+<!-- BIBLIOTHÈQUE QR                                      -->
+<!-- ===================================================== -->
 
-    <script src="app.js"></script>
+<script
+    src="https://unpkg.com/html5-qrcode"
+    type="text/javascript">
+</script>
+
+
+<!-- ===================================================== -->
+<!-- APPLICATION                                          -->
+<!-- ===================================================== -->
+
+<script src="app.js"></script>
+
 
 </body>
+
 </html>
