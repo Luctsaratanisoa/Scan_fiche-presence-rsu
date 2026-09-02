@@ -4,50 +4,257 @@
 
 
 /*
- * LIEN WEB DE TON FORMULAIRE KOBO
+ * ========================================================
+ * LIEN WEB DU FORMULAIRE KOBO
+ * ========================================================
  *
- * ⚠️ REMPLACE CETTE URL
+ * ⚠️ REMPLACER PAR LE VRAI LIEN DE TON FORMULAIRE
  */
 
 const KOBO_FORM_URL =
-    "https://ee.kobotoolbox.org/single/BYiyz0ZJ";
+    "https://ee.kobotoolbox.org/single/5wtbPWQd";
 
 
 /*
- * CHAMP QR DANS KOBO
- */
-
-const QR_FIELD =
-    "membres_group/qr_code_raw";
-
-
-/*
+ * ========================================================
  * MOT DE PASSE
+ * ========================================================
  *
- * ⚠️ CHANGE LE MOT DE PASSE
+ * ⚠️ CHANGE CE MOT DE PASSE
  */
 
 const PASSWORD =
-    "RSU_pass_1234";
+    "Pass_RSU_2026";
 
 
 /*
- * NOM DE LA SESSION
+ * ========================================================
+ * CLÉS DE SESSION
+ * ========================================================
  */
 
 const AUTH_KEY =
     "scannerAuthenticated";
 
+const SETTINGS_KEY =
+    "scannerSettings";
 
-/* =========================================================
-   VARIABLES
-   ========================================================= */
+
+/*
+ * ========================================================
+ * VARIABLES DU SCANNER
+ * ========================================================
+ */
 
 let scanner = null;
 
 let scannedCode = null;
 
 let scanning = false;
+
+
+/*
+ * ========================================================
+ * LISTE DES COMMUNES
+ * ========================================================
+ *
+ * Elle correspond à ton XLSForm.
+ */
+
+const communes = {
+
+    ambohidratrimo: [
+
+        {
+            value: "ambohidratrimo_c",
+            label: "Ambohidratrimo"
+        },
+
+        {
+            value: "ambohimanjaka",
+            label: "Ambohimanjaka"
+        },
+
+        {
+            value: "ambohitrimanjaka",
+            label: "Ambohitrimanjaka"
+        },
+
+        {
+            value: "ampanotokana",
+            label: "Ampanotokana"
+        },
+
+        {
+            value: "androidhibe",
+            label: "Androidhibe"
+        },
+
+        {
+            value: "antehiroka",
+            label: "Antehiroka"
+        },
+
+        {
+            value: "aovaratsy",
+            label: "Aovaratsy"
+        },
+
+        {
+            value: "fenoarivo",
+            label: "Fenoarivo"
+        },
+
+        {
+            value: "fihaonana",
+            label: "Fihaonana"
+        },
+
+        {
+            value: "iaborano",
+            label: "Iaborano"
+        },
+
+        {
+            value: "ivato",
+            label: "Ivato"
+        },
+
+        {
+            value: "mananjara",
+            label: "Mananjara"
+        },
+
+        {
+            value: "merimandroso",
+            label: "Merimandroso"
+        },
+
+        {
+            value: "mahitsy",
+            label: "Mahitsy"
+        },
+
+        {
+            value: "talatamaty",
+            label: "Talatamaty"
+        }
+
+    ],
+
+
+    antananarivo_atsimondrano: [
+
+        {
+            value: "alakamisy_fenioarivo",
+            label: "Alakamisy Fenoarivo"
+        },
+
+        {
+            value: "andoharanofotsy",
+            label: "Andoharanofotsy"
+        },
+
+        {
+            value: "ampitatafika",
+            label: "Ampitatafika"
+        },
+
+        {
+            value: "ankadimbahoaka",
+            label: "Ankadimbahoaka"
+        },
+
+        {
+            value: "fenoarivo_atsimondrano",
+            label: "Fenoarivo"
+        }
+
+    ],
+
+
+    antananarivo_avaradrano: [
+
+        {
+            value: "alasia",
+            label: "Alasia"
+        },
+
+        {
+            value: "alasora",
+            label: "Alasora"
+        },
+
+        {
+            value: "ambohidrabiby",
+            label: "Ambohidrabiby"
+        },
+
+        {
+            value: "ankadinandriana",
+            label: "Ankadinandriana"
+        }
+
+    ]
+
+};
+
+
+/*
+ * =========================================================
+ * NOMS AFFICHÉS DES DISTRICTS
+ * =========================================================
+ */
+
+const districtLabels = {
+
+    ambohidratrimo:
+        "Ambohidratrimo",
+
+    antananarivo_atsimondrano:
+        "Antananarivo Atsimondrano",
+
+    antananarivo_avaradrano:
+        "Antananarivo Avaradrano"
+
+};
+
+
+/*
+ * =========================================================
+ * NOMS AFFICHÉS DES ACTIONS
+ * =========================================================
+ */
+
+const actionLabels = {
+
+    check_in:
+        "Check in",
+
+    check_out:
+        "Check out"
+
+};
+
+
+/*
+ * =========================================================
+ * NOMS AFFICHÉS DES SALLES
+ * =========================================================
+ */
+
+const salleLabels = {
+
+    salle_1:
+        "Salle 1",
+
+    salle_2:
+        "Salle 2",
+
+    salle_3:
+        "Salle 3"
+
+};
 
 
 /* =========================================================
@@ -58,128 +265,143 @@ document.addEventListener(
     "DOMContentLoaded",
     function () {
 
-        console.log("Application chargée");
-
-
-        /*
-         * Récupérer les éléments HTML
-         */
-
-        const loginButton =
-            document.getElementById(
-                "loginButton"
-            );
-
-        const passwordInput =
-            document.getElementById(
-                "passwordInput"
-            );
-
-        const continueButton =
-            document.getElementById(
-                "continueButton"
-            );
-
-        const rescanButton =
-            document.getElementById(
-                "rescanButton"
-            );
-
-        const logoutButton =
-            document.getElementById(
-                "logoutButton"
-            );
-
-
-        /*
-         * Vérifier les éléments
-         */
-
-        if (!loginButton) {
-
-            console.error(
-                "ERREUR : loginButton introuvable"
-            );
-
-            return;
-        }
-
-
-        /*
-         * Bouton connexion
-         */
-
-        loginButton.addEventListener(
-            "click",
-            login
+        console.log(
+            "Application chargée"
         );
 
 
         /*
-         * Touche Entrée
+         * Boutons
          */
 
-        passwordInput.addEventListener(
-            "keydown",
-            function (event) {
+        document
+            .getElementById("loginButton")
+            .addEventListener(
+                "click",
+                login
+            );
 
-                if (event.key === "Enter") {
 
-                    login();
+        document
+            .getElementById("passwordInput")
+            .addEventListener(
+                "keydown",
+                function (event) {
+
+                    if (
+                        event.key === "Enter"
+                    ) {
+
+                        login();
+
+                    }
 
                 }
+            );
 
-            }
-        );
+
+        document
+            .getElementById("districtSelect")
+            .addEventListener(
+                "change",
+                districtChanged
+            );
+
+
+        document
+            .getElementById("startButton")
+            .addEventListener(
+                "click",
+                saveSettings
+            );
+
+
+        document
+            .getElementById("continueButton")
+            .addEventListener(
+                "click",
+                openKoboForm
+            );
+
+
+        document
+            .getElementById("rescanButton")
+            .addEventListener(
+                "click",
+                restartScanner
+            );
+
+
+        document
+            .getElementById("logoutButton")
+            .addEventListener(
+                "click",
+                logout
+            );
 
 
         /*
-         * Bouton Enregistrer
+         * Vérifier la session
          */
 
-        continueButton.addEventListener(
-            "click",
-            openKoboForm
-        );
+        const authenticated =
+            sessionStorage.getItem(
+                AUTH_KEY
+            );
+
+
+        const savedSettings =
+            getSavedSettings();
 
 
         /*
-         * Scanner à nouveau
-         */
-
-        rescanButton.addEventListener(
-            "click",
-            restartScanner
-        );
-
-
-        /*
-         * Verrouiller
-         */
-
-        logoutButton.addEventListener(
-            "click",
-            logout
-        );
-
-
-        /*
-         * Vérifier si déjà connecté
+         * CAS 1
+         *
+         * Retour depuis Kobo :
+         *
+         * authentifié + paramètres déjà
+         * enregistrés.
+         *
+         * On va directement au scanner.
          */
 
         if (
-            sessionStorage.getItem(
-                AUTH_KEY
-            ) === "true"
+            authenticated === "true" &&
+            savedSettings !== null
         ) {
 
             showScanner();
 
-        } else {
-
-            showLogin();
+            return;
 
         }
+
+
+        /*
+         * CAS 2
+         *
+         * Déjà authentifié mais
+         * paramètres non enregistrés.
+         */
+
+        if (
+            authenticated === "true"
+        ) {
+
+            showSettings();
+
+            return;
+
+        }
+
+
+        /*
+         * CAS 3
+         *
+         * Première ouverture.
+         */
+
+        showLogin();
 
     }
 );
@@ -190,11 +412,6 @@ document.addEventListener(
    ========================================================= */
 
 function login() {
-
-    console.log(
-        "Tentative de connexion"
-    );
-
 
     const passwordInput =
         document.getElementById(
@@ -207,16 +424,12 @@ function login() {
         );
 
 
-    const enteredPassword =
+    const password =
         passwordInput.value;
 
 
-    /*
-     * Vérification
-     */
-
     if (
-        enteredPassword === PASSWORD
+        password === PASSWORD
     ) {
 
         console.log(
@@ -225,8 +438,8 @@ function login() {
 
 
         /*
-         * Mémoriser la connexion
-         * pendant la session Safari.
+         * Mémoriser l'authentification
+         * pendant cette session.
          */
 
         sessionStorage.setItem(
@@ -235,27 +448,20 @@ function login() {
         );
 
 
-        /*
-         * Nettoyer
-         */
-
         passwordInput.value = "";
 
         loginError.textContent = "";
 
 
         /*
-         * Afficher scanner
+         * Afficher les paramètres
          */
 
-        showScanner();
+        showSettings();
 
-    } else {
+    }
 
-        console.log(
-            "Mot de passe incorrect"
-        );
-
+    else {
 
         loginError.textContent =
             "❌ Mot de passe incorrect.";
@@ -265,6 +471,7 @@ function login() {
         passwordInput.focus();
 
     }
+
 }
 
 
@@ -274,22 +481,342 @@ function login() {
 
 function showLogin() {
 
-    const loginScreen =
-        document.getElementById(
-            "loginScreen"
+    document
+        .getElementById("loginScreen")
+        .style.display = "flex";
+
+
+    document
+        .getElementById("settingsScreen")
+        .style.display = "none";
+
+
+    document
+        .getElementById("scannerScreen")
+        .style.display = "none";
+
+}
+
+
+/* =========================================================
+   AFFICHER PARAMÈTRES
+   ========================================================= */
+
+function showSettings() {
+
+    document
+        .getElementById("loginScreen")
+        .style.display = "none";
+
+
+    document
+        .getElementById("settingsScreen")
+        .style.display = "flex";
+
+
+    document
+        .getElementById("scannerScreen")
+        .style.display = "none";
+
+
+    /*
+     * Si paramètres déjà enregistrés,
+     * les afficher.
+     */
+
+    const settings =
+        getSavedSettings();
+
+
+    if (
+        settings !== null
+    ) {
+
+        document
+            .getElementById("districtSelect")
+            .value =
+            settings.district;
+
+
+        districtChanged();
+
+
+        document
+            .getElementById("communeSelect")
+            .value =
+            settings.commune;
+
+
+        document
+            .getElementById("actionSelect")
+            .value =
+            settings.action;
+
+
+        document
+            .getElementById("salleSelect")
+            .value =
+            settings.salle;
+
+    }
+
+}
+
+
+/* =========================================================
+   DISTRICT CHANGÉ
+   ========================================================= */
+
+function districtChanged() {
+
+    const district =
+        document
+            .getElementById("districtSelect")
+            .value;
+
+
+    const communeSelect =
+        document
+            .getElementById("communeSelect");
+
+
+    /*
+     * Réinitialiser
+     */
+
+    communeSelect.innerHTML = "";
+
+
+    /*
+     * Aucun district
+     */
+
+    if (
+        district === ""
+    ) {
+
+        communeSelect.disabled =
+            true;
+
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+
+        option.value = "";
+
+        option.textContent =
+            "-- Sélectionner d'abord le District --";
+
+
+        communeSelect.appendChild(
+            option
         );
 
-    const scannerScreen =
-        document.getElementById(
-            "scannerScreen"
+
+        return;
+
+    }
+
+
+    /*
+     * Activer commune
+     */
+
+    communeSelect.disabled =
+        false;
+
+
+    const defaultOption =
+        document.createElement(
+            "option"
         );
 
 
-    loginScreen.style.display =
-        "flex";
+    defaultOption.value = "";
 
-    scannerScreen.style.display =
-        "none";
+    defaultOption.textContent =
+        "-- Sélectionner la Commune --";
+
+
+    communeSelect.appendChild(
+        defaultOption
+    );
+
+
+    /*
+     * Ajouter les communes
+     */
+
+    const list =
+        communes[district] || [];
+
+
+    list.forEach(
+        function (commune) {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                commune.value;
+
+
+            option.textContent =
+                commune.label;
+
+
+            communeSelect.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ENREGISTRER LES PARAMÈTRES
+   ========================================================= */
+
+function saveSettings() {
+
+    const district =
+        document
+            .getElementById("districtSelect")
+            .value;
+
+
+    const commune =
+        document
+            .getElementById("communeSelect")
+            .value;
+
+
+    const action =
+        document
+            .getElementById("actionSelect")
+            .value;
+
+
+    const salle =
+        document
+            .getElementById("salleSelect")
+            .value;
+
+
+    const error =
+        document
+            .getElementById("settingsError");
+
+
+    /*
+     * Vérification
+     */
+
+    if (
+        district === "" ||
+        commune === "" ||
+        action === "" ||
+        salle === ""
+    ) {
+
+        error.textContent =
+            "❌ Veuillez remplir tous les champs.";
+
+        return;
+
+    }
+
+
+    error.textContent = "";
+
+
+    /*
+     * Sauvegarder
+     */
+
+    const settings = {
+
+        district:
+            district,
+
+        commune:
+            commune,
+
+        action:
+            action,
+
+        salle:
+            salle
+
+    };
+
+
+    sessionStorage.setItem(
+        SETTINGS_KEY,
+        JSON.stringify(settings)
+    );
+
+
+    console.log(
+        "Paramètres enregistrés :",
+        settings
+    );
+
+
+    /*
+     * Aller au scanner
+     */
+
+    showScanner();
+
+}
+
+
+/* =========================================================
+   RÉCUPÉRER LES PARAMÈTRES
+   ========================================================= */
+
+function getSavedSettings() {
+
+    const data =
+        sessionStorage.getItem(
+            SETTINGS_KEY
+        );
+
+
+    if (
+        !data
+    ) {
+
+        return null;
+
+    }
+
+
+    try {
+
+        return JSON.parse(data);
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Erreur paramètres :",
+            error
+        );
+
+        return null;
+
+    }
 
 }
 
@@ -300,26 +827,97 @@ function showLogin() {
 
 function showScanner() {
 
-    const loginScreen =
-        document.getElementById(
-            "loginScreen"
-        );
-
-    const scannerScreen =
-        document.getElementById(
-            "scannerScreen"
-        );
+    const settings =
+        getSavedSettings();
 
 
-    loginScreen.style.display =
-        "none";
+    if (
+        settings === null
+    ) {
 
-    scannerScreen.style.display =
-        "block";
+        showSettings();
+
+        return;
+
+    }
+
+
+    document
+        .getElementById("loginScreen")
+        .style.display = "none";
+
+
+    document
+        .getElementById("settingsScreen")
+        .style.display = "none";
+
+
+    document
+        .getElementById("scannerScreen")
+        .style.display = "block";
 
 
     /*
-     * Démarrer la caméra
+     * Afficher les informations
+     */
+
+    document
+        .getElementById("currentDistrict")
+        .textContent =
+        districtLabels[
+            settings.district
+        ] || settings.district;
+
+
+    /*
+     * Chercher label commune
+     */
+
+    const communeList =
+        communes[
+            settings.district
+        ] || [];
+
+
+    const communeObject =
+        communeList.find(
+            function (item) {
+
+                return (
+                    item.value ===
+                    settings.commune
+                );
+
+            }
+        );
+
+
+    document
+        .getElementById("currentCommune")
+        .textContent =
+        communeObject
+            ? communeObject.label
+            : settings.commune;
+
+
+    document
+        .getElementById("currentAction")
+        .textContent =
+        actionLabels[
+            settings.action
+        ] || settings.action;
+
+
+    document
+        .getElementById("currentSalle")
+        .textContent =
+        salleLabels[
+            settings.salle
+        ] || settings.salle;
+
+
+    /*
+     * Démarrer caméra
      */
 
     startScanner();
@@ -328,7 +926,7 @@ function showScanner() {
 
 
 /* =========================================================
-   DÉMARRER LE SCANNER
+   DÉMARRER SCANNER
    ========================================================= */
 
 function startScanner() {
@@ -357,10 +955,11 @@ function startScanner() {
 
 
     /*
-     * Nettoyer
+     * Nettoyage
      */
 
     reader.innerHTML = "";
+
 
     result.classList.add(
         "hidden"
@@ -368,10 +967,6 @@ function startScanner() {
 
 
     scannedCode = null;
-
-
-    status.textContent =
-        "Demande d'accès à la caméra...";
 
 
     /*
@@ -386,11 +981,12 @@ function startScanner() {
             "🔒 Cette page doit être ouverte en HTTPS.";
 
         return;
+
     }
 
 
     /*
-     * Vérifier la bibliothèque
+     * Vérifier bibliothèque
      */
 
     if (
@@ -401,12 +997,13 @@ function startScanner() {
         status.textContent =
             "❌ Le scanner QR n'a pas pu être chargé.";
 
-        console.error(
-            "Html5Qrcode n'est pas disponible"
-        );
-
         return;
+
     }
+
+
+    status.textContent =
+        "📷 Demande d'accès à la caméra...";
 
 
     /*
@@ -428,8 +1025,11 @@ function startScanner() {
         fps: 10,
 
         qrbox: {
+
             width: 250,
+
             height: 250
+
         },
 
         aspectRatio: 1.0
@@ -438,17 +1038,14 @@ function startScanner() {
 
 
     /*
-     * Démarrer caméra arrière.
-     *
-     * On utilise "environment"
-     * sans "exact", car Safari peut
-     * refuser exact:environment.
+     * Caméra arrière
      */
 
     scanner.start(
 
         {
-            facingMode: "environment"
+            facingMode:
+                "environment"
         },
 
         config,
@@ -458,13 +1055,16 @@ function startScanner() {
         onScanFailure
 
     )
+
     .then(
         function () {
 
             scanning = true;
 
+
             status.textContent =
                 "📷 Placez le QR code devant la caméra.";
+
 
             console.log(
                 "Caméra démarrée"
@@ -472,6 +1072,7 @@ function startScanner() {
 
         }
     )
+
     .catch(
         function (error) {
 
@@ -501,6 +1102,7 @@ function onScanSuccess(
     ) {
 
         return;
+
     }
 
 
@@ -525,48 +1127,40 @@ function onScanSuccess(
      * Afficher résultat
      */
 
-    const code =
-        document.getElementById(
-            "code"
-        );
-
-    const status =
-        document.getElementById(
-            "status"
-        );
-
-    const result =
-        document.getElementById(
-            "result"
-        );
-
-
-    code.textContent =
+    document
+        .getElementById("code")
+        .textContent =
         decodedText;
 
 
-    status.textContent =
+    document
+        .getElementById("status")
+        .textContent =
         "✅ QR code détecté.";
 
 
-    result.classList.remove(
-        "hidden"
-    );
+    document
+        .getElementById("result")
+        .classList.remove(
+            "hidden"
+        );
 
 }
 
 
 /* =========================================================
-   ERREUR DE LECTURE QR
+   ERREUR DE LECTURE
    ========================================================= */
 
-function onScanFailure(error) {
+function onScanFailure(
+    error
+) {
 
     /*
      * Ne rien afficher.
      *
      * Cette fonction est appelée
-     * en permanence pendant le scan.
+     * pendant la recherche du QR.
      */
 
 }
@@ -592,66 +1186,57 @@ function handleCameraError(
         );
 
 
-    let message =
-        "❌ Impossible d'accéder à la caméra.";
-
-
     if (
         error &&
         (
             error.name ===
-            "NotAllowedError"
-            ||
+            "NotAllowedError" ||
+
             String(error).includes(
                 "NotAllowedError"
             )
         )
     ) {
 
-        message =
-            "📷 Accès à la caméra refusé. " +
+        status.textContent =
+            "📷 Accès caméra refusé. " +
             "Autorisez la caméra pour ce site " +
-            "dans les réglages de Safari, " +
-            "puis rechargez la page.";
+            "dans Safari puis rechargez la page.";
+
+        return;
 
     }
 
-    else if (
-        !window.isSecureContext
-    ) {
 
-        message =
-            "🔒 La caméra nécessite HTTPS.";
-
-    }
-
-    else if (
+    if (
         error &&
         (
             error.name ===
-            "NotReadableError"
-            ||
+            "NotReadableError" ||
+
             String(error).includes(
                 "NotReadableError"
             )
         )
     ) {
 
-        message =
+        status.textContent =
             "📷 La caméra est déjà utilisée " +
             "par une autre application.";
+
+        return;
 
     }
 
 
     status.textContent =
-        message;
+        "❌ Impossible d'accéder à la caméra.";
 
 }
 
 
 /* =========================================================
-   ARRÊTER CAMÉRA
+   ARRÊTER SCANNER
    ========================================================= */
 
 function stopScanner() {
@@ -663,6 +1248,7 @@ function stopScanner() {
 
         scanner
             .stop()
+
             .then(
                 function () {
 
@@ -670,11 +1256,12 @@ function stopScanner() {
 
                 }
             )
+
             .catch(
                 function (error) {
 
                     console.error(
-                        "Erreur arrêt scanner :",
+                        "Erreur arrêt caméra :",
                         error
                     );
 
@@ -689,23 +1276,49 @@ function stopScanner() {
 
 
 /* =========================================================
-   OUVRIR KOBO
+   ENVOYER VERS KOBO
    ========================================================= */
 
 function openKoboForm() {
 
-    if (!scannedCode) {
+    if (
+        !scannedCode
+    ) {
 
         alert(
             "Aucun QR code n'a été détecté."
         );
 
         return;
+
     }
 
 
     /*
-     * Vérifier configuration Kobo
+     * Récupérer les paramètres
+     */
+
+    const settings =
+        getSavedSettings();
+
+
+    if (
+        settings === null
+    ) {
+
+        alert(
+            "Les paramètres de session sont absents."
+        );
+
+        showSettings();
+
+        return;
+
+    }
+
+
+    /*
+     * Vérifier l'URL Kobo
      */
 
     if (
@@ -715,16 +1328,16 @@ function openKoboForm() {
     ) {
 
         alert(
-            "⚠️ Configurez KOBO_FORM_URL " +
-            "dans app.js."
+            "⚠️ Configurez KOBO_FORM_URL dans app.js."
         );
 
         return;
+
     }
 
 
     /*
-     * Paramètres URL
+     * Créer paramètres URL
      */
 
     const params =
@@ -732,17 +1345,79 @@ function openKoboForm() {
 
 
     /*
-     * Préremplir le QR
+     * ====================================================
+     * DISTRICT
+     * ====================================================
      */
 
     params.append(
-        "d[" + QR_FIELD + "]",
+        "d[district]",
+        settings.district
+    );
+
+
+    /*
+     * ====================================================
+     * COMMUNE
+     * ====================================================
+     */
+
+    params.append(
+        "d[commune]",
+        settings.commune
+    );
+
+
+    /*
+     * ====================================================
+     * ACTION
+     * ====================================================
+     */
+
+    params.append(
+        "d[action]",
+        settings.action
+    );
+
+
+    /*
+     * ====================================================
+     * SALLE
+     * ====================================================
+     */
+
+    params.append(
+        "d[salle]",
+        settings.salle
+    );
+
+
+    /*
+     * ====================================================
+     * QR CODE
+     * ====================================================
+     *
+     * IMPORTANT :
+     *
+     * scan_qr se trouve dans le groupe
+     * Fiche_de_presence.
+     *
+     * On utilise donc :
+     *
+     * d[Fiche_de_presence/scan_qr]
+     *
+     */
+
+    params.append(
+        "d[Fiche_de_presence/scan_qr]",
         scannedCode
     );
 
 
     /*
-     * Adresse de retour
+     * ====================================================
+     * URL DE RETOUR
+     * ====================================================
      */
 
     const returnUrl =
@@ -757,7 +1432,7 @@ function openKoboForm() {
 
 
     /*
-     * Construire URL Kobo
+     * Construire URL
      */
 
     const koboUrl =
@@ -767,13 +1442,13 @@ function openKoboForm() {
 
 
     console.log(
-        "URL Kobo :",
+        "URL envoyée à Kobo :",
         koboUrl
     );
 
 
     /*
-     * Aller vers Kobo
+     * Aller dans Kobo
      */
 
     window.location.href =
@@ -794,29 +1469,21 @@ function restartScanner() {
     scannedCode = null;
 
 
-    const code =
-        document.getElementById(
-            "code"
-        );
+    document
+        .getElementById("code")
+        .textContent = "";
 
-    const result =
-        document.getElementById(
-            "result"
-        );
 
-    const reader =
-        document.getElementById(
-            "reader"
+    document
+        .getElementById("result")
+        .classList.add(
+            "hidden"
         );
 
 
-    code.textContent = "";
-
-    result.classList.add(
-        "hidden"
-    );
-
-    reader.innerHTML = "";
+    document
+        .getElementById("reader")
+        .innerHTML = "";
 
 
     setTimeout(
@@ -838,16 +1505,7 @@ function restartScanner() {
 function logout() {
 
     console.log(
-        "Verrouillage"
-    );
-
-
-    /*
-     * Supprimer la session
-     */
-
-    sessionStorage.removeItem(
-        AUTH_KEY
+        "Déconnexion"
     );
 
 
@@ -859,20 +1517,44 @@ function logout() {
 
 
     /*
-     * Afficher login
+     * Effacer mot de passe
+     */
+
+    sessionStorage.removeItem(
+        AUTH_KEY
+    );
+
+
+    /*
+     * Effacer District,
+     * Commune, Action et Salle
+     */
+
+    sessionStorage.removeItem(
+        SETTINGS_KEY
+    );
+
+
+    /*
+     * Réinitialiser variables
+     */
+
+    scannedCode = null;
+
+
+    /*
+     * Retour connexion
      */
 
     showLogin();
 
 
     /*
-     * Donner le focus
+     * Focus mot de passe
      */
 
     document
-        .getElementById(
-            "passwordInput"
-        )
+        .getElementById("passwordInput")
         .focus();
 
 }
